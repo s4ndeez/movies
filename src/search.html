@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+    <link rel="stylesheet" href="index.css" />
+</head>
+<script src="fectapi.js"></script>
+<body>
+    <header>
+        <div class="container">
+          <ul class="navigation">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="rating.html">Rate</a></li>
+          </ul>
+          <aside>
+            <input type="text" id="movie" placeholder="Movie Name">
+            <button onclick="buttonClicked()">Search</button>
+          </aside>
+        </div>
+      </header>
+    <h1 id="searched" style="padding-left: 28px;"> </h1>
+    <div id="resultsContainer"></div>
+
+    <script>
+        var urlParams = new URLSearchParams(window.location.search);
+        var search = urlParams.get('query')
+    
+        document.getElementById('searched').innerHTML = `Search Result for ${search}: `
+    
+        fetch(`https://www.omdbapi.com/?apikey=c1aecf62&s=${search}`)
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(data)
+            displayResults(data.Search);
+        })
+        .catch((error) => {
+            console.error('Error fetching search results:', error);
+        });
+    
+        function displayResults(results) {
+            var resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = '';
+    
+            if (results && results.length > 0) {
+                results.forEach(result => {
+                    var resultElement = document.createElement('div');
+                    resultElement.innerHTML = `
+                        <div class="top-picks">
+                            <a href="result.html?titles=${result.Title}">
+                                <img src="${result.Poster}" alt="" style="height: 280px; width: 200px;">
+                            </a>
+                            <div class="shows">
+                                <p id="title">Title: ${result.Title}</p>
+                                <p>Year: ${result.Year}</p>
+                            </div>
+                        </div>
+                    `;
+                    resultsContainer.appendChild(resultElement);
+                    console.log(result)
+                });
+            } else {
+                resultsContainer.textContent = 'No results found';
+            }
+        }
+    </script>
+</body>
+</html>
